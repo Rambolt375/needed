@@ -1,0 +1,5 @@
+[control]
+mainframe ansible_connection=local
+
+[server]
+target ansible_host=192.168.56.11 ansible_user=han

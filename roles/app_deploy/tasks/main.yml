@@ -1,0 +1,51 @@
+- name: 2.1. Inisialisasi struktur direktori proyek
+  file:
+    path: "{{ remote_work_dir }}"
+    state: directory
+    mode: "0755"
+    owner: han
+    group: han
+
+- name: 2.2. Jalankan Pengunduhan Kode Proyek dari Git
+  git:
+    repo: "{{ git_repo }}"
+    dest: "{{ remote_work_dir }}"
+    force: yes
+  become_user: han
+
+- name: 2.2b. Kirim berkas konfigurasi Docker dan Supervisor dari template
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ remote_work_dir }}/{{ item.dest }}"
+    owner: han
+    group: han
+    mode: "0644"
+  loop:
+    - { src: "supervisord.conf.j2", dest: "supervisord.conf" }
+    - { src: "nginx.conf.j2", dest: "nginx.conf" }
+    - { src: "Dockerfile.j2", dest: "Dockerfile" }
+    - { src: "docker-compose.yml.j2", dest: "docker-compose.yml" }
+
+- name: 2.3. Paksa sinkronisasi waktu sistem dengan Asia/Jakarta
+  shell: |
+    timedatectl set-timezone Asia/Jakarta
+    systemctl restart systemd-timesyncd
+    sleep 1
+    timedatectl set-ntp true
+  failed_when: false
+
+- name: 2.3.5. Bersihkan residu kontainer lama
+  shell: |
+    sg docker -c "docker compose down -v"
+    sg docker -c "docker volume prune -f"
+  args:
+    chdir: "{{ remote_work_dir }}"
+  become_user: han
+  failed_when: false
+
+- name: 2.5. Kompilasi aplikasi lokal terpadu dan jalankan container
+  shell: |
+    sg docker -c "docker compose up -d --build"
+  args:
+    chdir: "{{ remote_work_dir }}"
+  become_user: han

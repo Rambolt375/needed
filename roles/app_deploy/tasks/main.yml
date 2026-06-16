@@ -7,12 +7,19 @@
     group: han
 
 - name: copy code
-  copy:
+  synchronize:
     src: "/home/han/park/"
     dest: "{{ remote_work_dir }}/"
+    archive: yes
+    recursive: yes
+
+- name: ganti ownership file
+  file:
+    path: "{{ remote_work_dir }}"
+    state: directory
     owner: han
     group: han
-    mode: "0755"
+    recurse: yes
 
 - name: Kirim konfigurasi
   template:

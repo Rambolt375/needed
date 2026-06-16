@@ -7,7 +7,7 @@
     group: han
 
 - name: copy code
-  ansible.builtin.copy:
+  copy:
     src: "/home/han/park/"
     dest: "{{ remote_work_dir }}/"
     owner: han

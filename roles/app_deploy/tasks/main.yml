@@ -6,12 +6,13 @@
     owner: han
     group: han
 
-- name: 2.2. Jalankan Pengunduhan Kode Proyek dari Git
-  git:
-    repo: "{{ git_repo }}"
-    dest: "{{ remote_work_dir }}"
-    force: yes
-  become_user: han
+- name: 2.2. Distribusikan source code Laravel beserta .env dari VM1 ke VM2
+  ansible.builtin.copy:
+    src: "/home/han/park/"
+    dest: "{{ remote_work_dir }}/"
+    owner: han
+    group: han
+    mode: "0755"
 
 - name: 2.2b. Kirim berkas konfigurasi Docker dan Supervisor dari template
   template:

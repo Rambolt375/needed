@@ -6,7 +6,6 @@
     remote_work_dir: "/home/han/park"
     git_repo: "https://github.com/Rambolt375/parking-app-asat.git"
   roles:
-    - docker_setup
     - app_deploy
 
 - name: 2. Konfigurasi Gateway Jaringan, DNS, dan Load Balancer

@@ -1,14 +1,13 @@
 ---
-- name: 1. Kompilasi & Deployment Microservices Application
+- name: deploy
   hosts: server
   become: yes
   vars:
     remote_work_dir: "/home/han/park"
-    git_repo: "https://github.com/Rambolt375/parking-app-asat.git"
   roles:
     - app_deploy
 
-- name: 2. Konfigurasi Gateway Jaringan, DNS, dan Load Balancer
+- name: dns and lb
   hosts: control
   become: yes
   vars:

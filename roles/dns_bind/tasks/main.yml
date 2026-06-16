@@ -1,9 +1,9 @@
-- name: 4.1. Install BIND9 dan DNS Utils
+- name: install dns
   apt:
     name: [bind9, bind9utils, bind9-doc, dnsutils]
     state: present
 
-- name: 4.2. Konfigurasi Zone di named.conf.local
+- name: konfigurasi zone named.conf.local
   copy:
     dest: /etc/bind/named.conf.local
     content: |
@@ -12,22 +12,22 @@
           file "/etc/bind/db.{{ domain_name }}";
       };
 
-- name: 4.3. Buat File Forward Zone (Mapping Domain ke IP)
+- name: buat file zone
   template:
     src: db.parking.j2
     dest: "/etc/bind/db.{{ domain_name }}"
 
-- name: 4.3.5. Validasi konfigurasi DNS BIND9 sebelum dinyalakan
+- name: validasi konfigurasi sebelum dinyalakan
   shell: named-checkconf /etc/bind/named.conf.local
   failed_when: false
 
-- name: 4.4. Restart dan Enable Service BIND9
+- name: restart dns
   service:
     name: bind9
     state: restarted
     enabled: yes
 
-- name: 4.5. Ubah Resolv.conf Sementara agar VM 1 bisa ngetes domainnya sendiri
+- name: tes dns
   shell: |
     sed -i '1i nameserver 127.0.0.1' /etc/resolv.conf
   failed_when: false

@@ -1,4 +1,4 @@
-- name: 2.1. Inisialisasi struktur direktori proyek
+- name: buat direktori proyek
   file:
     path: "{{ remote_work_dir }}"
     state: directory
@@ -6,7 +6,7 @@
     owner: han
     group: han
 
-- name: 2.2. Distribusikan source code Laravel beserta .env dari VM1 ke VM2
+- name: copy code
   ansible.builtin.copy:
     src: "/home/han/park/"
     dest: "{{ remote_work_dir }}/"
@@ -14,7 +14,7 @@
     group: han
     mode: "0755"
 
-- name: 2.2b. Kirim berkas konfigurasi Docker dan Supervisor dari template
+- name: Kirim konfigurasi
   template:
     src: "{{ item.src }}"
     dest: "{{ remote_work_dir }}/{{ item.dest }}"
@@ -27,7 +27,7 @@
     - { src: "Dockerfile.j2", dest: "Dockerfile" }
     - { src: "docker-compose.yml.j2", dest: "docker-compose.yml" }
 
-- name: 2.3. Paksa sinkronisasi waktu sistem dengan Asia/Jakarta
+- name: sinkronisasi waktu sistem dengan timezone
   shell: |
     timedatectl set-timezone Asia/Jakarta
     systemctl restart systemd-timesyncd
@@ -35,7 +35,7 @@
     timedatectl set-ntp true
   failed_when: false
 
-- name: 2.3.5. Bersihkan residu kontainer lama
+- name: clear kontainer lama
   shell: |
     sg docker -c "docker compose down -v"
     sg docker -c "docker volume prune -f"
@@ -44,7 +44,7 @@
   become_user: han
   failed_when: false
 
-- name: 2.5. Kompilasi aplikasi lokal terpadu dan jalankan container
+- name: build image dan jalankan container
   shell: |
     sg docker -c "docker compose up -d --build"
   args:

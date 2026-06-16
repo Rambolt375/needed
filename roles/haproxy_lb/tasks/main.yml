@@ -1,15 +1,15 @@
-- name: 3.1. Pastikan paket layanan HAProxy terinstall di OS lokal VM 1
+- name: install haproxy
   apt:
     name: haproxy
     state: present
     update_cache: yes
 
-- name: 3.2. Buat direktori penyimpanan sertifikat SSL
+- name: direktori penyimpanan sertifikat ssl
   file:
     path: /etc/haproxy/ssl
     state: directory
 
-- name: 3.3. Generate Self-Signed Certificate (.pem) untuk HAProxy
+- name: buat certificate untuk haproxy
   shell: |
     openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
     -keyout /etc/haproxy/ssl/parking.key \
@@ -20,12 +20,12 @@
   args:
     creates: /etc/haproxy/ssl/parking.pem
 
-- name: 3.4. Generate file konfigurasi haproxy.cfg (Dengan SSL Termination)
+- name: buat file konfigurasi haproxy.cfg
   template:
     src: haproxy.cfg.j2
     dest: /etc/haproxy/haproxy.cfg
 
-- name: 3.5. Restart dan aktifkan service HAProxy untuk menerapkan perubahan
+- name: restart haproxy
   service:
     name: haproxy
     state: restarted
